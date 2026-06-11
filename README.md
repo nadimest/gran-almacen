@@ -72,10 +72,12 @@ Cada evento repinta el almacén entero: paleta propia, guirnalda propia, cliente
 
 El gancho técnico del proyecto es la restricción: **cero dependencias en runtime, cero assets, cero build step para desarrollar.**
 
-- **Música por género, sintetizada nota a nota** — un secuenciador de ~30 líneas sobre Web Audio
-  agenda osciladores y ruido filtrado: el güiro de la cumbia es ruido blanco con un bandpass,
-  el bombo legüero es una senoidal de 72 Hz con caída, el "tunga-tunga" cordobés son dos bajos alternados.
-  Cinco temas (`cumbia`, `cuarteto`, `chacarera`, `navidad`, `tormenta`) en [`js/audio.js`](js/audio.js).
+- **Música por género, sintetizada nota a nota** — sin un solo sample: el acordeón son tres
+  sierras desafinadas con vibrato tardío, el cencerro es la receta del cowbell de la 808 (dos
+  cuadradas por un pasabanda), el bombo legüero una senoidal de 70 Hz con caída, y hasta la
+  reverb es un impulso de ruido generado al vuelo para el `ConvolverNode`. Cada tema corre en
+  dos fases (acompañamiento → melodía) con repiques de timbal cerrando cada frase.
+  Cinco géneros (`cumbia`, `cuarteto`, `chacarera`, `navidad`, `tormenta`) en [`js/audio.js`](js/audio.js).
 - **Todo el estado del juego vive en un solo objeto** `G` ([`js/state.js`](js/state.js)); la UI es render puro
   sin listeners ([`js/ui.js`](js/ui.js)) y tres listeners delegados cablean todos los clicks ([`js/main.js`](js/main.js)).
 - **Un build de un archivo** — [`tools/build_standalone.py`](tools/build_standalone.py) inlinea el CSS y concatena

@@ -25,7 +25,7 @@ index.html                  DOM shell only (modals, HUD, containers)
 css/styles.css              all styles incl. theme-asado/patrio/navidad/sudestada + power-out
 js/helpers.js               pure utils ($, rnd, ri, pick, fmt, clamp)
 js/data.js                  ITEMS, STATIONS, EVENTS, ARCH, FOLKS, all dialogue  ← most content work happens here
-js/audio.js                 Web Audio sequencer; MUSIC themes: cumbia, cuarteto, chacarera, navidad, tormenta; sfx object; setPower() mutes music during apagón
+js/audio.js                 Web Audio sequencer + synth engine: tone() generic ADSR voice (detuned osc stacks, filter env, vibrato), instrument recipes (acordeon/bajo/pianito/cencerro/timbal/bombo/guiro), synthesized convolver reverb + compressor master. MUSIC themes (cumbia, cuarteto, chacarera, navidad, tormenta) are 8-bar 2-phase loops (comping → melody via mel arrays + playMel) with phrase-end fills. setPower() mutes music during apagón
 js/state.js                 G (single mutable state container) + pure queries (currentEvent, unlockedItems, grabItems, neededGrams, anyoneWants)
 js/storage.js               best-run persistence via localStorage (try/catch tolerant: jsdom/private mode)
 js/ui.js                    pure DOM rendering, NO event listeners; buttons carry data-cid / data-ti / data-key
