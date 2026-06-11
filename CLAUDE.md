@@ -33,6 +33,9 @@ js/game.js                  day cycle, rAF loop, spawning, archetype behavior, s
 js/main.js                  entry point; all wiring via 3 delegated listeners + modal buttons
 tools/build_standalone.py   inlines css + concatenates modules (stripping import/export) → dist/index.html
 tools/smoke_test.mjs        jsdom integration test against the built bundle (npm test)
+.github/workflows/test.yml  CI: npm ci + npm test on every push/PR (README badge)
+docs/*.png                  screenshots embedded in the README (re-capture via browse if visuals change)
+LICENSE                     MIT
 ```
 
 ### Architecture rules (keep these invariants)
