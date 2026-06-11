@@ -1,0 +1,16 @@
+{
+  "name": "almacen-alegre",
+  "version": "0.2.0",
+  "description": "Arcade de almacén de barrio argentino — mostrador, fiambre al gramo y libreta de fiados",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "python3 tools/build_standalone.py",
+    "test": "python3 tools/build_standalone.py && node tools/smoke_test.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  },
+  "license": "MIT",
+  "private": true
+}
