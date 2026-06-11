@@ -16,17 +16,18 @@ Vanilla JS, zero dependencies at runtime, zero build step for development. Every
    - **Customer archetypes**: `kid` 🎒 swaps a (non-sliced) order item mid-wait up to 2 times; `picky` 🧐 rejects sliced items below quality 2 and removes them from the tray, but tips +10%; `rushed` ⏱️ has 0.55× patience and tips +25% if served above 50% patience; `caserito` ⭐ is the fiado-asking loyal customer.
    - Radio AM Barrio flavor toasts, floating money on sales, event-aware newspaper headlines.
 3. **Refactor** (commit `0115d6c`): split the 1,158-line monolith into ES modules, converted all click handling to event delegation via `data-*` attributes, added `tools/build_standalone.py`.
+4. **v3** (commit `a8552c9`): **sudestada** on day 5 — the first event with a mid-day mechanic. Rain theme + "tormenta" music (milonga triste); at 35–50% of the day the power cuts for 22–30s: heladera items unbuyable, cold items drop out of pending orders (all-cold orders become velas), the radio music goes silent, body gets `power-out` (dark + flickering candles). Velas/pilas/linterna on the event shelf. Also: repo pushed to GitHub (`nadimest/almacen-alegre`), deployed to Pages, storage swapped to localStorage.
 
 ## Repo layout
 
 ```
 index.html                  DOM shell only (modals, HUD, containers)
-css/styles.css              all styles incl. theme-asado/patrio/navidad
+css/styles.css              all styles incl. theme-asado/patrio/navidad/sudestada + power-out
 js/helpers.js               pure utils ($, rnd, ri, pick, fmt, clamp)
 js/data.js                  ITEMS, STATIONS, EVENTS, ARCH, FOLKS, all dialogue  ← most content work happens here
-js/audio.js                 Web Audio sequencer; MUSIC themes: cumbia, cuarteto, chacarera, navidad; sfx object
+js/audio.js                 Web Audio sequencer; MUSIC themes: cumbia, cuarteto, chacarera, navidad, tormenta; sfx object; setPower() mutes music during apagón
 js/state.js                 G (single mutable state container) + pure queries (currentEvent, unlockedItems, grabItems, neededGrams, anyoneWants)
-js/storage.js               best-run persistence via window.storage (Claude artifacts API; try/catch fallback elsewhere)
+js/storage.js               best-run persistence via localStorage (try/catch tolerant: jsdom/private mode)
 js/ui.js                    pure DOM rendering, NO event listeners; buttons carry data-cid / data-ti / data-key
 js/game.js                  day cycle, rAF loop, spawning, archetype behavior, serve/pricing, fiado, slicing
 js/main.js                  entry point; all wiring via 3 delegated listeners + modal buttons
@@ -51,7 +52,7 @@ npm install                          # dev only: jsdom for tests
 npm test                             # build + jsdom smoke suite
 ```
 
-GitHub Pages serves the repo root directly. `dist/` and `node_modules/` are gitignored.
+Live at **https://nadimest.github.io/almacen-alegre/** — GitHub Pages serves the repo root (`main` branch) directly; pushing to `main` redeploys. Remote: `github.com/nadimest/almacen-alegre` (public). `dist/` and `node_modules/` are gitignored.
 
 ## Game balance reference (current values)
 
@@ -63,27 +64,27 @@ GitHub Pages serves the repo root directly. `dist/` and `node_modules/` are giti
 - Fiado: caseritos ask with p=0.55 after a successful serve. Paydays at start of days 3/5/7 collect all debts ×1.15.
 - Spawn: max concurrent `min(1+ceil(day/2), 3)`; interval `rnd(4,9) − min(day*0.4, 3)`, ÷ event spawnMul, floor 1.6s. Tray cap 6 items.
 - Archetype weights: normal 30, caserito 24, kid 16 (day≥2), picky 13 (day≥3), rushed 11 (day≥2), plus per-event `archBoost`.
+- Sudestada (day 5): apagón starts at `dayLen × rnd(0.35, 0.5)` elapsed, lasts `rnd(22, 30)`s, one per day (config in `EVENTS[5].cut`). During it: heladera blocked in `stationClick` and excluded from `unlockedItems`; pending cold order items dropped (`APAGON_SAY`), all-cold orders become velas (`APAGON_VELAS`). Radio uses `RADIO_SUDESTADA` all day.
 
 ## How to add content
 
 - **New item**: entry in `ITEMS` (data.js) with `st` pointing at a station; `day:N` gates unlock. Done.
-- **New festive event**: entry in `EVENTS` keyed by day + its items with `event:"id"` + optionally a `MUSIC` theme (audio.js) and a `body.theme-X` block (styles.css). `applyTheme` handles class swapping.
+- **New festive event**: entry in `EVENTS` keyed by day + its items with `event:"id"` + optionally a `MUSIC` theme (audio.js) and a `body.theme-X` block (styles.css). `applyTheme` handles class swapping. Optional `cut:{from,to,dur}` gives the event a mid-day apagón (see sudestada).
 - **New archetype**: `ARCH` + `FOLKS` + `GREETS` entries, weight in `pickArch()`, behavior hook in `update()` or `tryServe()` (see kid/picky for the two patterns: timed behavior vs. serve-time rule).
 
 ## Testing approach
 
-`tools/smoke_test.mjs` boots the built bundle in jsdom and drives real click paths: start → simulated updates → delegated serve → fiado accept → station/tray clicks → event-day transition (theme + music) → picky rejection. jsdom has no AudioContext or window.storage; the code already tolerates both being absent — keep it that way. Always run `npm test` before committing; add a scenario when you add a mechanic.
+`tools/smoke_test.mjs` boots the built bundle in jsdom and drives real click paths: start → simulated updates → delegated serve → fiado accept → station/tray clicks → event-day transition (theme + music) → picky rejection → sudestada apagón cycle (cut → cold orders dropped → heladera blocked → restore). jsdom has no AudioContext; the code already tolerates it being absent — keep it that way. Always run `npm test` before committing; add a scenario when you add a mechanic. For visual QA, build and drive `dist/index.html` in a real browser (game globals are reachable there because the bundle is one classic script).
 
 ## Backlog (discussed, not built — in rough priority order)
 
-1. **Sudestada / power cut event**: heladera goes dark mid-day, cold items unavailable or spoiling, candles visual, maybe radio storm warnings. Mostly data.js + one rule in `stationClick`.
-2. **Monedero minigame**: school kids pay with a fistful of coins — quick coin-counting interaction under time pressure (analogous to the slicer, but for payment).
-3. **Persistent caseritos**: the same Doña Coca returns across days; debt, trust and dialogue evolve per person instead of per transaction. Needs identity in `S.debts` and spawn pool changes.
-4. Endless mode after day 7 (victory screen already hints at it).
-5. Deploy to GitHub Pages; mobile polish pass (it's already touch-first, 580px column).
+1. **Monedero minigame**: school kids pay with a fistful of coins — quick coin-counting interaction under time pressure (analogous to the slicer, but for payment).
+2. **Persistent caseritos**: the same Doña Coca returns across days; debt, trust and dialogue evolve per person instead of per transaction. Needs identity in `S.debts` and spawn pool changes.
+3. Endless mode after day 7 (victory screen already hints at it).
+4. Mobile polish pass (it's already touch-first, 580px column).
 
 ## Quirks worth knowing
 
-- `window.storage` (best-run persistence) only exists when the standalone file runs as a Claude artifact; everywhere else it throws and is silently caught. Swap for localStorage if deploying to Pages.
-- The repo was developed inside a Claude.ai container; commits exist locally only. Add a remote and push from the real machine.
 - The slicer keeps game time running (intentional Overcooked-style pressure); fiado and libreta modals pause it.
+- `S.power === false` only ever happens during a `cut` event's apagón; `=== false` (not falsy) checks keep normal days (`power` undefined) unaffected.
+- The apagón can outlive the day's closing bell if customers linger; `startDay`/`applyTheme`/`gameOver` all reset `power-out` + `setPower(true)`, so it can't leak across days.
