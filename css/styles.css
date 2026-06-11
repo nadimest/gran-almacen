@@ -96,22 +96,25 @@ body.theme-asado #garland .g-asado{display:inline;}
 /* ---------- SUDESTADA ---------- */
 body.theme-sudestada{
   background:
-    repeating-linear-gradient(93deg, rgba(70,90,110,.07) 0 2px, transparent 2px 7px),
-    repeating-linear-gradient(0deg, rgba(70,90,110,.06) 0 1px, transparent 1px 5px),
-    #cfc9b4;
+    repeating-linear-gradient(93deg, rgba(55,75,95,.10) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(0deg, rgba(55,75,95,.09) 0 1px, transparent 1px 5px),
+    #b7b6a5;
 }
 #rain{display:none;position:absolute;inset:0;pointer-events:none;z-index:2;
-  background-image:radial-gradient(2px 11px at 9px 12px, rgba(90,118,150,.42), transparent 75%);
-  background-size:16px 36px;
-  animation:rainfall .5s linear infinite;
+  background-image:
+    radial-gradient(2.5px 15px at 9px 13px, rgba(62,92,124,.75), transparent 72%),
+    radial-gradient(2px 11px at 22px 30px, rgba(62,92,124,.5), transparent 72%);
+  background-size:30px 44px;
+  animation:rainfall .4s linear infinite;
 }
 body.theme-sudestada #rain{display:block;}
-@keyframes rainfall{to{background-position:-16px 36px;}}
-body.theme-sudestada #customers{background:rgba(60,80,110,.08);}
-body.power-out #app{filter:brightness(.6) saturate(.65);}
-body.power-out #rain{opacity:.45;}
+@keyframes rainfall{to{background-position:-30px 44px;}}
+body.theme-sudestada #customers{background:rgba(50,70,100,.13);}
+body.power-out{background:#33332c;}
+body.power-out #app{filter:brightness(.55) saturate(.6);}
+body.power-out #rain{opacity:.4;}
 body.power-out .stbtn[data-st="heladera"]{filter:grayscale(1);opacity:.5;}
-#candles{display:none;position:absolute;top:-13px;left:0;right:0;justify-content:space-between;padding:0 30px;pointer-events:none;z-index:45;font-size:16px;line-height:1;}
+#candles{display:none;position:absolute;top:-17px;left:0;right:0;justify-content:space-between;padding:0 30px;pointer-events:none;z-index:45;font-size:21px;line-height:1;}
 body.power-out #candles{display:flex;}
 .candle{animation:flicker 1.4s infinite;}
 .candle:nth-child(2){animation-delay:.5s;}
