@@ -32,6 +32,8 @@ export function startDay() {
   if (ev && ev.cut) S.cutIn = S.dayLen * rnd(ev.cut.from, ev.cut.to);
   ui.buildStations();
   ui.renderTray(); ui.renderCustomers(); ui.renderHUD();
+  ui.persiana(S.day);
+  sfx.persiana();
   /* día de cobro */
   if ((S.day === 3 || S.day === 5 || S.day === 7) && S.debts.length) {
     const tot = S.debts.reduce((a, d) => a + d.amount, 0);

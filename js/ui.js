@@ -12,6 +12,16 @@ export function applyTheme(ev) {
   }
 }
 
+/* La persiana metálica sube al arrancar cada día */
+export function persiana(day) {
+  const p = $("persiana");
+  $("persianaDay").textContent = "DÍA " + day;
+  p.classList.remove("hidden", "up");
+  void p.offsetWidth; /* reinicia la animación si quedó aplicada */
+  p.classList.add("up");
+  setTimeout(() => p.classList.add("hidden"), 1600);
+}
+
 export function renderHUD() {
   const S = G.S;
   $("hudDay").textContent = S.day;

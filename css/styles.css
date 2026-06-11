@@ -65,6 +65,30 @@ body{
 #repBar{height:5px;background:#d8c6a3;border-radius:3px;margin-top:2px;overflow:hidden;border:1px solid rgba(42,31,20,.4);}
 #repFill{height:100%;width:50%;background:var(--ok);transition:width .3s;}
 
+/* ---------- PALETAS POR DÍA ---------- */
+/* Cada evento repinta la escena entera vía las variables base */
+body.theme-asado{
+  --verde:#A8431C; --verde-osc:#5E2310; --verde-claro:#C25A2E;
+  background:
+    repeating-linear-gradient(93deg, rgba(140,70,30,.08) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(0deg, rgba(140,70,30,.07) 0 1px, transparent 1px 5px),
+    #E5BE85;
+}
+body.theme-patrio{
+  --verde:#5B93C4; --verde-osc:#27567E; --verde-claro:#74ACDF;
+  background:
+    repeating-linear-gradient(93deg, rgba(60,90,130,.07) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(0deg, rgba(60,90,130,.06) 0 1px, transparent 1px 5px),
+    #DCE4E9;
+}
+body.theme-navidad{
+  --verde:#8E2E3C; --verde-osc:#4D1620; --verde-claro:#A84352;
+  background:
+    repeating-linear-gradient(93deg, rgba(70,60,120,.09) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(0deg, rgba(70,60,120,.08) 0 1px, transparent 1px 5px),
+    #A9A6C9;
+}
+
 /* ---------- FESTIVE DECOR ---------- */
 #bunting{
   display:none;flex:none;height:15px;
@@ -89,12 +113,18 @@ body.theme-navidad #lights{display:flex;}
   background:radial-gradient(ellipse at 50% 115%, rgba(255,110,20,.25), transparent 55%);}
 body.theme-asado #ember{display:block;}
 body.theme-navidad #customers{background:rgba(40,45,95,.07);}
-body.theme-asado #garland .g-normal{display:none;}
-#garland .g-asado{display:none;}
+/* guirnalda temática: cada evento cuelga lo suyo */
+#garland .g-asado,#garland .g-patrio,#garland .g-navidad,#garland .g-sudestada{display:none;}
+body.theme-asado #garland .g-normal,body.theme-patrio #garland .g-normal,
+body.theme-navidad #garland .g-normal,body.theme-sudestada #garland .g-normal{display:none;}
 body.theme-asado #garland .g-asado{display:inline;}
+body.theme-patrio #garland .g-patrio{display:inline;}
+body.theme-navidad #garland .g-navidad{display:inline;}
+body.theme-sudestada #garland .g-sudestada{display:inline;}
 
 /* ---------- SUDESTADA ---------- */
 body.theme-sudestada{
+  --verde:#48655A; --verde-osc:#28403A; --verde-claro:#5E7F72;
   background:
     repeating-linear-gradient(93deg, rgba(55,75,95,.10) 0 2px, transparent 2px 7px),
     repeating-linear-gradient(0deg, rgba(55,75,95,.09) 0 1px, transparent 1px 5px),
@@ -237,6 +267,24 @@ body.power-out #candles{display:flex;}
 .stbtn.evento::before{
   content:"HOY";position:absolute;top:-7px;left:-5px;background:var(--rojo);color:var(--crema);
   font-size:7px;font-weight:bold;letter-spacing:1px;padding:1px 4px;border-radius:4px;transform:rotate(-8deg);
+}
+
+/* ---------- LA PERSIANA (transición de día) ---------- */
+#persiana{
+  position:absolute;inset:0;z-index:200;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  background:repeating-linear-gradient(0deg, #8A8378 0 12px, #6F685E 12px 16px, #9B948A 16px 22px);
+  border-bottom:7px solid #4A443C;
+  box-shadow:0 6px 18px rgba(0,0,0,.5);
+}
+#persiana.hidden{display:none;}
+#persiana.up{animation:persianaUp 1.05s cubic-bezier(.65,.02,.45,1) .3s forwards;}
+@keyframes persianaUp{to{transform:translateY(-102%);}}
+#persiana .ptext{
+  font-family:"Alfa Slab One","Arial Black",sans-serif;font-size:36px;letter-spacing:4px;
+  color:var(--crema);text-shadow:2px 2px 0 rgba(0,0,0,.45);
+  background:rgba(42,31,20,.55);border:2px solid rgba(255,246,224,.4);border-radius:12px;
+  padding:6px 26px;
 }
 
 /* ---------- TOASTS ---------- */

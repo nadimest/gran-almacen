@@ -144,4 +144,5 @@ export const sfx = {
   tada()    { if (!AC) return; const t = AC.currentTime; [523, 659, 784, 1046].forEach((f, i) => note(f, t + i * 0.09, 0.22, "triangle", 0.09)); },
   kid()     { if (!AC) return; const t = AC.currentTime; note(880, t, 0.08, "square", 0.05); note(740, t + 0.09, 0.10, "square", 0.05); },
   trueno()  { if (!AC) return; const t = AC.currentTime; note(55, t, 1.0, "sine", 0.22, 32); guiro(t, 0.7, 0.10, 180); guiro(t + 0.25, 0.5, 0.06, 120); },
+  persiana(){ if (!AC) return; const t = AC.currentTime; for (let i = 0; i < 8; i++) guiro(t + 0.3 + i * 0.09, 0.06, 0.09 - i * 0.007, 650 + i * 170); },
 };

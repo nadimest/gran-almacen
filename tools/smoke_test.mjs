@@ -42,6 +42,7 @@ setTimeout(() => {
     w.document.getElementById("nextDayBtn").click();
     check("día 2: overlay de evento", !w.document.getElementById("eventOverlay").classList.contains("hidden"));
     check("día 2: tema asado + cuarteto", w.document.body.className.includes("theme-asado") && w.eval('getMusicTheme()==="cuarteto"'));
+    check("persiana de transición al subir el día", !w.document.getElementById("persiana").classList.contains("hidden") && w.document.getElementById("persianaDay").textContent === "DÍA 2");
     w.document.getElementById("eventGo").click();
     check("góndola especial renderizada", w.document.querySelectorAll(".stbtn.evento").length === 3);
 
