@@ -1,21 +1,21 @@
-/* Mejor racha persistente (window.storage si existe; falla en silencio si no) */
+/* Mejor racha persistente (localStorage; falla en silencio si no hay) */
 import { $, fmt } from "./helpers.js";
 import { G } from "./state.js";
 
 let best = null;
 
-export async function loadBest() {
-  try { const r = await window.storage.get("almacen-best"); best = r ? JSON.parse(r.value) : null; }
+export function loadBest() {
+  try { const r = localStorage.getItem("almacen-best"); best = r ? JSON.parse(r) : null; }
   catch (e) { best = null; }
   renderBest();
 }
 
-export async function saveBest() {
+export function saveBest() {
   if (!G.S) return;
   const cur = { days: G.S.day, money: Math.round(G.S.money) };
   if (!best || cur.days > best.days || (cur.days === best.days && cur.money > best.money)) {
     best = cur;
-    try { await window.storage.set("almacen-best", JSON.stringify(best)); } catch (e) {}
+    try { localStorage.setItem("almacen-best", JSON.stringify(best)); } catch (e) {}
   }
 }
 
