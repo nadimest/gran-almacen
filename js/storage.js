@@ -5,7 +5,7 @@ import { G } from "./state.js";
 let best = null;
 
 export function loadBest() {
-  try { const r = localStorage.getItem("almacen-best"); best = r ? JSON.parse(r) : null; }
+  try { const r = localStorage.getItem("gran-almacen-best"); best = r ? JSON.parse(r) : null; }
   catch (e) { best = null; }
   renderBest();
 }
@@ -15,7 +15,7 @@ export function saveBest() {
   const cur = { days: G.S.day, money: Math.round(G.S.money) };
   if (!best || cur.days > best.days || (cur.days === best.days && cur.money > best.money)) {
     best = cur;
-    try { localStorage.setItem("almacen-best", JSON.stringify(best)); } catch (e) {}
+    try { localStorage.setItem("gran-almacen-best", JSON.stringify(best)); } catch (e) {}
   }
 }
 

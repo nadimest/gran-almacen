@@ -71,14 +71,14 @@ function showSummary(rent) {
   const S = G.S, st = S.stats, ev = currentEvent();
   let head;
   if (ev && st.eventSold >= 4) head = ev.id === "asado" ? "“SE QUEDÓ SIN CARBÓN: EL ALMACÉN SALVÓ EL FERIADO”"
-    : ev.id === "patrio" ? "“EL LOCRO DE LA CUADRA SALIÓ DEL ALMACÉN ALEGRE”"
+    : ev.id === "patrio" ? "“EL LOCRO DE LA CUADRA SALIÓ DEL GRAN ALMACÉN”"
     : ev.id === "sudestada" ? "“EL ALMACÉN QUE ALUMBRÓ EL APAGÓN: VELAS PARA TODA LA CUADRA”"
     : "“NOCHEBUENA SALVADA: HABÍA PAN DULCE HASTA LAS 23:59”";
-  else if (st.lost === 0 && st.served >= 4) head = "“EL ALMACÉN ALEGRE CONQUISTA LA CUADRA”";
+  else if (st.lost === 0 && st.served >= 4) head = "“EL GRAN ALMACÉN CONQUISTA LA CUADRA”";
   else if (st.lost > st.served) head = "“VECINOS MURMURAN: ¿QUÉ PASA EN EL ALMACÉN?”";
   else if (st.fiadoN >= 2) head = "“EL ALMACENERO QUE TODAVÍA FÍA: UNA RAREZA”";
   else if (st.perfect >= 3) head = "“CORTA EL FIAMBRE AL GRAMO: VECINOS FASCINADOS”";
-  else head = "“EL ALMACÉN ALEGRE SOBREVIVE OTRO DÍA”";
+  else head = "“EL GRAN ALMACÉN SOBREVIVE OTRO DÍA”";
   $("sumHeadline").textContent = head;
   $("sumDate").textContent = "Edición vespertina — Día " + S.day + (ev ? " · " + ev.name : "");
   $("sumStats").innerHTML =

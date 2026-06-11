@@ -1,4 +1,4 @@
-# Almacén Alegre 🥖🧀📒
+# Gran Almacén 🥖🧀📒
 
 Arcade de almacén de barrio argentino. Atendé el mostrador, cortá el fiambre al
 peso justo y anotá a los caseritos en la libreta. Inspirado en Overcooked y
@@ -12,7 +12,7 @@ css/styles.css          estilos (persiana, kraft, temas festivos)
 js/
   helpers.js            utilidades puras
   data.js               catálogo, calendario festivo, arquetipos, diálogos
-  audio.js              secuenciador Web Audio (cumbia/cuarteto/chacarera/navidad) + SFX
+  audio.js              secuenciador Web Audio (cumbia/cuarteto/chacarera/navidad/tormenta) + SFX
   state.js              contenedor de estado G + consultas puras
   storage.js            mejor racha persistente
   ui.js                 render puro del DOM (delegación por data-*)

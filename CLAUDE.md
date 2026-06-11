@@ -1,4 +1,4 @@
-# CLAUDE.md — Almacén Alegre
+# CLAUDE.md — Gran Almacén
 
 Context file for Claude Code. Read this before touching anything.
 
@@ -16,7 +16,7 @@ Vanilla JS, zero dependencies at runtime, zero build step for development. Every
    - **Customer archetypes**: `kid` 🎒 swaps a (non-sliced) order item mid-wait up to 2 times; `picky` 🧐 rejects sliced items below quality 2 and removes them from the tray, but tips +10%; `rushed` ⏱️ has 0.55× patience and tips +25% if served above 50% patience; `caserito` ⭐ is the fiado-asking loyal customer.
    - Radio AM Barrio flavor toasts, floating money on sales, event-aware newspaper headlines.
 3. **Refactor** (commit `0115d6c`): split the 1,158-line monolith into ES modules, converted all click handling to event delegation via `data-*` attributes, added `tools/build_standalone.py`.
-4. **v3** (commit `a8552c9`): **sudestada** on day 5 — the first event with a mid-day mechanic. Rain theme + "tormenta" music (milonga triste); at 35–50% of the day the power cuts for 22–30s: heladera items unbuyable, cold items drop out of pending orders (all-cold orders become velas), the radio music goes silent, body gets `power-out` (dark + flickering candles). Velas/pilas/linterna on the event shelf. Also: repo pushed to GitHub (`nadimest/almacen-alegre`), deployed to Pages, storage swapped to localStorage.
+4. **v3** (commit `a8552c9`): **sudestada** on day 5 — the first event with a mid-day mechanic. Rain theme + "tormenta" music (milonga triste); at 35–50% of the day the power cuts for 22–30s: heladera items unbuyable, cold items drop out of pending orders (all-cold orders become velas), the radio music goes silent, body gets `power-out` (dark + flickering candles). Velas/pilas/linterna on the event shelf. Also: repo pushed to GitHub, deployed to Pages, storage swapped to localStorage. Later renamed Almacén Alegre → **Gran Almacén** (repo `nadimest/gran-almacen`).
 
 ## Repo layout
 
@@ -52,7 +52,7 @@ npm install                          # dev only: jsdom for tests
 npm test                             # build + jsdom smoke suite
 ```
 
-Live at **https://nadimest.github.io/almacen-alegre/** — GitHub Pages serves the repo root (`main` branch) directly; pushing to `main` redeploys. Remote: `github.com/nadimest/almacen-alegre` (public). `dist/` and `node_modules/` are gitignored.
+Live at **https://nadimest.github.io/gran-almacen/** — GitHub Pages serves the repo root (`main` branch) directly; pushing to `main` redeploys. Remote: `github.com/nadimest/gran-almacen` (public). `dist/` and `node_modules/` are gitignored.
 
 ## Game balance reference (current values)
 
