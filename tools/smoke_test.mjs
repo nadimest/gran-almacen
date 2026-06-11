@@ -58,6 +58,25 @@ setTimeout(() => {
     w.eval("update(0.05)");
     check("kid cambia el pedido a mitad de espera", before !== w.eval("JSON.stringify(G.S.customers[0].order)"));
 
+    // sudestada (día 5): apagón de luz
+    w.eval("G.S.day=4;G.S.customers=[];G.S.debts=[];startDay()");
+    w.document.getElementById("eventGo").click();
+    check("día 5: tema sudestada + tormenta", w.document.body.className.includes("theme-sudestada") && w.eval('getMusicTheme()==="tormenta"'));
+    w.eval('G.S.customers=[];G.S.tray=[];' +
+      'G.S.customers.push({id:7,nm:"Beto",em:"🧔",arch:"normal",loyal:false,order:[{key:"birra"},{key:"pan"}],patience:30,maxPat:30,greet:"h",changes:9});' +
+      'G.S.customers.push({id:8,nm:"Marta",em:"👩‍🦰",arch:"normal",loyal:false,order:[{key:"leche"}],patience:30,maxPat:30,greet:"h",changes:9});' +
+      'renderCustomers();G.S.cutIn=0.01;update(0.05);');
+    check("apagón: corta la luz y baja los pedidos fríos",
+      w.eval("G.S.power===false") && w.document.body.classList.contains("power-out") &&
+      w.eval('G.S.customers[0].order.length===1 && G.S.customers[0].order[0].key==="pan"'));
+    check("apagón: pedido todo frío pasa a velas", w.eval('G.S.customers[1].order.length===1 && G.S.customers[1].order[0].key==="velas"'));
+    w.document.querySelector('.stbtn[data-key="soda"]').click();
+    check("apagón: heladera bloqueada", w.eval("G.S.tray.length===0"));
+    w.eval("G.S.cutLeft=0.01;update(0.05)");
+    w.document.querySelector('.stbtn[data-key="soda"]').click();
+    check("vuelve la luz: heladera anda de nuevo",
+      w.eval("G.S.power===true && G.S.tray.length===1") && !w.document.body.classList.contains("power-out"));
+
     console.log(failed ? `\n${failed} chequeo(s) fallaron` : "\nTodos los chequeos pasaron 🧉");
     process.exit(failed ? 1 : 0);
   } catch (e) {

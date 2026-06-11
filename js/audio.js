@@ -2,6 +2,7 @@
 
 let AC = null, musicOn = true, seqStep = 0, seqNext = 0;
 let musicTheme = "cumbia";
+let powerOn = true; /* apagón: la radio del almacén enmudece */
 
 function note(f, t, dur, type, g, slideTo) {
   if (!AC || !musicOn) return;
@@ -92,10 +93,28 @@ const MUSIC = {
       if (q === 8) note(bar.bell[1], t, ST * 3, "sine", 0.055);
       if (q === 6) guiro(t, 0.10, 0.05, 8000); /* shimmer navideño */
     } },
+  tormenta: { stepDur: 60 / 88 / 4, total: 64, /* milonga triste bajo la lluvia */
+    bars: [
+      { b: 110.00, c: [220, 261.63, 329.63] },      /* Am */
+      { b: 146.83, c: [220, 293.66, 349.23] },      /* Dm */
+      { b: 82.41,  c: [207.65, 246.94, 329.63] },   /* E7 */
+      { b: 110.00, c: [220, 261.63, 329.63] },      /* Am */
+    ],
+    on(s, t) {
+      const bar = this.bars[Math.floor(s / 16) % 4], q = s % 16, ST = this.stepDur;
+      if (q === 0) note(bar.b, t, ST * 5, "triangle", 0.17);          /* bajo milonguero 3-3-2 */
+      if (q === 6) note(bar.b * 1.5, t, ST * 5, "triangle", 0.13);
+      if (q === 12) note(bar.b, t, ST * 3.5, "triangle", 0.15);
+      if (q === 4 || q === 10) bar.c.forEach(f => note(f, t, ST * 2.2, "sawtooth", 0.013)); /* bandoneón lánguido */
+      if (q % 2 === 0) guiro(t, 0.14, 0.03, 6800);                    /* llovizna constante */
+      if (q === 14 && Math.floor(s / 16) % 2 === 1) note(bar.c[2] * 2, t, ST * 3, "sine", 0.045); /* silbido triste */
+      if (s === 32) { note(48, t, 1.4, "sine", 0.14, 30); guiro(t, 0.6, 0.05, 150); } /* trueno lejano */
+    } },
 };
 
 function seqTick() {
   if (!AC) return;
+  if (!powerOn) { seqNext = AC.currentTime + 0.1; return; }
   const M = MUSIC[musicTheme];
   while (seqNext < AC.currentTime + 0.12) {
     M.on(seqStep, seqNext);
@@ -111,6 +130,7 @@ export function audioInit() {
   setInterval(seqTick, 25);
 }
 export function setMusicTheme(th) { if (MUSIC[th] && th !== musicTheme) { musicTheme = th; seqStep = 0; } }
+export function setPower(on) { powerOn = on; }
 export function getMusicTheme() { return musicTheme; }
 export function toggleMusic() { musicOn = !musicOn; if (musicOn) audioInit(); return musicOn; }
 
@@ -123,4 +143,5 @@ export const sfx = {
   sliceTick(){ if (!AC) return; guiro(AC.currentTime, 0.04, 0.07); },
   tada()    { if (!AC) return; const t = AC.currentTime; [523, 659, 784, 1046].forEach((f, i) => note(f, t + i * 0.09, 0.22, "triangle", 0.09)); },
   kid()     { if (!AC) return; const t = AC.currentTime; note(880, t, 0.08, "square", 0.05); note(740, t + 0.09, 0.10, "square", 0.05); },
+  trueno()  { if (!AC) return; const t = AC.currentTime; note(55, t, 1.0, "sine", 0.22, 32); guiro(t, 0.7, 0.10, 180); guiro(t + 0.25, 0.5, 0.06, 120); },
 };

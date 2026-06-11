@@ -20,6 +20,7 @@ export function unlockedItems() {
   const ev = currentEvent();
   return Object.keys(ITEMS).filter(k => {
     const it = ITEMS[k];
+    if (G.S.power === false && it.st === "heladera") return false; /* apagón: la heladera a oscuras */
     if (it.event) return ev && ev.id === it.event;
     return it.day <= G.S.day;
   });

@@ -1,8 +1,8 @@
 /* Lógica central: ciclo de días, loop, vecinos, entrega, fiado y cortadora */
 import { $, rnd, ri, pick, fmt, clamp } from "./helpers.js";
-import { ITEMS, GRAM_OPTS, EVENTS, ARCH, FOLKS, GREETS, HAPPY, ANGRY, WRONG, FIADO_ASK, KID_SWAP, PICKY_REJECT, RADIO } from "./data.js";
+import { ITEMS, GRAM_OPTS, EVENTS, ARCH, FOLKS, GREETS, HAPPY, ANGRY, WRONG, FIADO_ASK, KID_SWAP, PICKY_REJECT, RADIO, RADIO_SUDESTADA, APAGON_SAY, APAGON_VELAS } from "./data.js";
 import { G, currentEvent, unlockedItems, grabItems, neededGrams } from "./state.js";
-import { audioInit, setMusicTheme, sfx } from "./audio.js";
+import { audioInit, setMusicTheme, setPower, sfx } from "./audio.js";
 import { saveBest, renderBest } from "./storage.js";
 import * as ui from "./ui.js";
 
@@ -26,6 +26,10 @@ export function startDay() {
   const ev = currentEvent();
   ui.applyTheme(ev);
   setMusicTheme(ev ? ev.music : "cumbia");
+  /* sudestada: queda programado el apagón del día */
+  S.power = true;
+  setPower(true);
+  if (ev && ev.cut) S.cutIn = S.dayLen * rnd(ev.cut.from, ev.cut.to);
   ui.buildStations();
   ui.renderTray(); ui.renderCustomers(); ui.renderHUD();
   /* día de cobro */
@@ -68,6 +72,7 @@ function showSummary(rent) {
   let head;
   if (ev && st.eventSold >= 4) head = ev.id === "asado" ? "“SE QUEDÓ SIN CARBÓN: EL ALMACÉN SALVÓ EL FERIADO”"
     : ev.id === "patrio" ? "“EL LOCRO DE LA CUADRA SALIÓ DEL ALMACÉN ALEGRE”"
+    : ev.id === "sudestada" ? "“EL ALMACÉN QUE ALUMBRÓ EL APAGÓN: VELAS PARA TODA LA CUADRA”"
     : "“NOCHEBUENA SALVADA: HABÍA PAN DULCE HASTA LAS 23:59”";
   else if (st.lost === 0 && st.served >= 4) head = "“EL ALMACÉN ALEGRE CONQUISTA LA CUADRA”";
   else if (st.lost > st.served) head = "“VECINOS MURMURAN: ¿QUÉ PASA EN EL ALMACÉN?”";
@@ -94,7 +99,8 @@ function gameOver(why, rent) {
   const S = G.S;
   G.running = false;
   const c = $("titleCard");
-  document.body.classList.remove("theme-asado", "theme-patrio", "theme-navidad");
+  document.body.classList.remove("theme-asado", "theme-patrio", "theme-navidad", "theme-sudestada", "power-out");
+  setPower(true);
   $("titleOverlay").classList.remove("hidden");
   const msg = why === "rep"
     ? "El barrio se cansó de esperar. Hasta Doña Coca cruzó a comprarle a la competencia. La persiana bajó para siempre…"
@@ -114,7 +120,7 @@ function victory() {
   $("titleOverlay").classList.remove("hidden");
   c.querySelector(".logo").innerHTML = "¡ALMACÉN<br>DEL AÑO!";
   c.querySelector(".sub").textContent = "★ ORGULLO DEL BARRIO ★";
-  $("howto").innerHTML = "🏆 Sobreviviste la semana entera: asado, locro patrio y Nochebuena incluidos. La cuadra te quiere y el fiambre sale al gramo.<br><br>Caja final: <b>" + fmt(S.money) + "</b> · Vecinos atendidos: <b>" + S.total.served + "</b> · Fama de barrio: <b>" + Math.round(S.rep) + "/100</b>";
+  $("howto").innerHTML = "🏆 Sobreviviste la semana entera: asado, locro patrio, sudestada y Nochebuena incluidos. La cuadra te quiere y el fiambre sale al gramo.<br><br>Caja final: <b>" + fmt(S.money) + "</b> · Vecinos atendidos: <b>" + S.total.served + "</b> · Fama de barrio: <b>" + Math.round(S.rep) + "/100</b>";
   $("startBtn").textContent = "🔄 JUGAR OTRA SEMANA";
   renderBest();
 }
@@ -132,11 +138,16 @@ export function update(dt) {
   const S = G.S, ev = currentEvent();
   if (!S.closing) {
     S.timeLeft -= dt;
-    if (S.timeLeft <= 0) { S.closing = true; ui.toast(ev && ev.id === "navidad" ? "🕛 ¡Casi medianoche! Atendé a los últimos…" : "🕗 ¡Estamos cerrando! Atendé a los que quedan…"); }
+    if (S.timeLeft <= 0) { S.closing = true; ui.toast(ev && ev.id === "navidad" ? "🕛 ¡Casi medianoche! Atendé a los últimos…" : ev && ev.id === "sudestada" ? "🕗 ¡Cerrando! Con esta agua, los últimos y a casa…" : "🕗 ¡Estamos cerrando! Atendé a los que quedan…"); }
   } else if (S.customers.length === 0) { endDay(); return; }
   /* radio del barrio */
   S.radioT -= dt;
-  if (S.radioT <= 0) { S.radioT = rnd(22, 38); ui.toast("📻 " + pick(RADIO), "radio"); }
+  if (S.radioT <= 0) { S.radioT = rnd(22, 38); ui.toast("📻 " + pick(ev && ev.id === "sudestada" ? RADIO_SUDESTADA : RADIO), "radio"); }
+  /* sudestada: el reloj del apagón */
+  if (ev && ev.cut) {
+    if (S.power && S.cutIn > 0) { S.cutIn -= dt; if (S.cutIn <= 0) powerCut(ev); }
+    else if (!S.power) { S.cutLeft -= dt; if (S.cutLeft <= 0) powerBack(); }
+  }
   /* llegan vecinos */
   const maxC = Math.min(1 + Math.ceil(S.day / 2), 3);
   if (!S.closing && S.customers.length < maxC) {
@@ -168,6 +179,34 @@ export function update(dt) {
     if (sl.tickAcc > 0.09) { sl.tickAcc = 0; sfx.sliceTick(); }
   }
   ui.renderHUD();
+}
+
+/* =================== EL APAGÓN (sudestada) =================== */
+function powerCut(ev) {
+  const S = G.S;
+  S.power = false;
+  S.cutLeft = rnd(ev.cut.dur[0], ev.cut.dur[1]);
+  document.body.classList.add("power-out");
+  setPower(false);
+  sfx.trueno();
+  ui.toast("⚡ ¡ZAS! Se cortó la luz en toda la cuadra…", "bad");
+  /* la heladera queda a oscuras: los pedidos fríos se bajan */
+  for (const c of S.customers) {
+    if (!c.order.some(o => ITEMS[o.key].st === "heladera")) continue;
+    c.order = c.order.filter(o => ITEMS[o.key].st !== "heladera");
+    if (c.order.length) ui.toast("🕯️ " + c.nm + ": “" + pick(APAGON_SAY) + "”");
+    else { c.order.push({ key: "velas" }); ui.toast("🕯️ " + c.nm + ": “" + pick(APAGON_VELAS) + "”"); }
+    ui.updateBubble(c);
+  }
+  ui.markWanted();
+}
+
+function powerBack() {
+  G.S.power = true;
+  document.body.classList.remove("power-out");
+  setPower(true);
+  sfx.tada();
+  ui.toast("💡 ¡Volvió la luz! La heladera ronronea de nuevo", "good");
 }
 
 /* =================== VECINOS =================== */
@@ -367,6 +406,7 @@ export function denyFiado() {
 export function stationClick(key) {
   const S = G.S, it = ITEMS[key];
   if (!it.event && it.day > S.day) { ui.toast("📦 Eso llega el día " + it.day, "bad"); return; }
+  if (S.power === false && it.st === "heladera") { ui.toast("⚡ Sin luz, la heladera no enfría. Cuando vuelva, hablamos", "bad"); sfx.buzz(); return; }
   if (it.sliced) {
     const g = neededGrams(key);
     if (g == null) { ui.toast("🤷 Nadie pidió " + it.name.toLowerCase() + " ahora"); sfx.buzz(); return; }

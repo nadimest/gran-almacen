@@ -24,6 +24,9 @@ export const ITEMS = {
   pandulce:{name:"Pan dulce",       emoji:"🍰", price:6200, st:"evento", day:99, event:"navidad"},
   sidra:   {name:"Sidra fría",      emoji:"🍾", price:4500, st:"evento", day:99, event:"navidad"},
   garrapi: {name:"Garrapiñada",     emoji:"🥜", price:1600, st:"evento", day:99, event:"navidad"},
+  velas:   {name:"Velas x6",        emoji:"🕯️", price:1400, st:"evento", day:99, event:"sudestada"},
+  pilas:   {name:"Pilas AA",        emoji:"🔋", price:2700, st:"evento", day:99, event:"sudestada"},
+  linterna:{name:"Linterna",        emoji:"🔦", price:5500, st:"evento", day:99, event:"sudestada"},
 };
 
 export const STATIONS = [
@@ -46,6 +49,10 @@ export const EVENTS = {
       desc:"Escarapelas, llovizna y olor a locro. Las doñas del barrio compiten por el locro más espeso de la cuadra.",
       rules:"🎃 Zapallo, porotos y pastelitos en la <b>góndola especial</b>.<br>🧐 Las <b>doñas exigentes</b> salen en banda: el fiambre va al gramo o lo cortás de nuevo.<br>🎵 Chacarera con bombo legüero, como debe ser.",
       spawnMul:1.2, archBoost:{picky:30} },
+  5:{ id:"sudestada", emoji:"🌧️⚡", name:"SUDESTADA — SE VIENE EL AGUA", theme:"sudestada", music:"tormenta",
+      desc:"Se largó la sudestada: agua de costado, viento del sudeste y el río que no para de subir. En el barrio ya se sabe: cuando llueve así, tarde o temprano se corta la luz.",
+      rules:"🕯️ Velas, pilas y linterna en la <b>góndola especial</b>: el barrio se abastece.<br>⚡ En algún momento <b>se corta la luz</b>: la heladera queda a oscuras y lo frío no se vende hasta que vuelva.<br>🔪 La cortadora es a manija, esa anda igual. 📻 La radio a pilas, también.",
+      spawnMul:1.15, archBoost:{caserito:10}, cut:{from:0.35, to:0.5, dur:[22,30]} },
   6:{ id:"navidad", emoji:"🎄🍾", name:"NOCHEBUENA EN EL BARRIO", theme:"navidad", music:"navidad",
       desc:"En este barrio el almanaque corre rápido: ya es 24 de diciembre. Lucecitas, calor de 40 grados y todos dejaron el pan dulce para último momento.",
       rules:"🍰 Pan dulce, sidra y garrapiñada en la <b>góndola especial</b>.<br>📒 Los <b>caseritos</b> caen a saludar (y a fiar): es tu última chance de hacer fama.<br>🎵 Cumbia navideña con campanitas. Brindis a las 12.",
@@ -91,3 +98,12 @@ export const RADIO=[
   "Radio AM Barrio: humedad al 98%. Se viene la sudestada.",
   "Radio AM Barrio: tango a las 20, cumbia a las 21, lo de siempre.",
 ];
+export const RADIO_SUDESTADA=[
+  "Radio AM Barrio: alerta por sudestada. El río subió 2,80 m y la esquina de siempre ya es pileta.",
+  "Radio AM Barrio: la compañía de luz “no descarta cortes en la zona”. Traducción: comprá velas.",
+  "Radio AM Barrio: se suspendió el fútbol del domingo. La cancha, bajo agua.",
+  "Radio AM Barrio: Doña Pocha avisa que si ven volar una chapa verde, es del gallinero de ella.",
+  "Radio AM Barrio: para la sudestada, mate y manta. Y la radio a pilas, por si acaso.",
+];
+export const APAGON_SAY=["Uh, sin luz… sacame lo frío, che","Si la heladera no enfría, no lo llevo","Dejá lo frío entonces, querido"];
+export const APAGON_VELAS=["Dame velas entonces, vecino","¿Velas tenés? Mejor eso","Cambiámelo por velas, dale"];

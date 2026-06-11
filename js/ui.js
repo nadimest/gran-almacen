@@ -4,7 +4,7 @@ import { ITEMS, STATIONS, ARCH } from "./data.js";
 import { G, currentEvent, anyoneWants } from "./state.js";
 
 export function applyTheme(ev) {
-  document.body.classList.remove("theme-asado", "theme-patrio", "theme-navidad");
+  document.body.classList.remove("theme-asado", "theme-patrio", "theme-navidad", "theme-sudestada", "power-out");
   if (ev) document.body.classList.add("theme-" + ev.theme);
   const L = $("lights");
   if (ev && ev.theme === "navidad" && !L.children.length) {
@@ -132,6 +132,7 @@ export function buildStations() {
       const b = document.createElement("button");
       b.className = "stbtn" + (locked ? " locked" : "") + (it.sliced ? " fiambre" : "") + (it.event ? " evento" : "");
       b.dataset.key = k;
+      b.dataset.st = it.st;
       b.innerHTML = '<span class="em">' + it.emoji + '</span><span class="nm">' + it.name + '</span><span class="pr">' + (it.sliced ? fmt(it.per100) + "/100g" : fmt(it.price)) + "</span>";
       row.appendChild(b);
     }
